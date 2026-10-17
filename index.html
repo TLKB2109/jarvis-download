@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS — your own Iron Man assistant</title>
+<style>
+  :root {
+    --bg: #05070c;
+    --panel: #0b111c;
+    --line: #1b2a40;
+    --glow: #4ec8ff;
+    --glow-soft: rgba(78, 200, 255, 0.35);
+    --text: #dbe9f7;
+    --muted: #7e93ab;
+    --mavis: #c98fff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(ellipse at 50% -10%, #0e1b2e 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  header { padding: 90px 0 50px; text-align: center; }
+  .ring {
+    width: 96px; height: 96px; margin: 0 auto 28px;
+    border-radius: 50%;
+    border: 2px solid var(--glow);
+    box-shadow: 0 0 40px var(--glow-soft), inset 0 0 20px var(--glow-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; letter-spacing: 2px; color: var(--glow);
+    animation: pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 30px var(--glow-soft), inset 0 0 16px var(--glow-soft); }
+    50% { box-shadow: 0 0 55px var(--glow-soft), inset 0 0 26px var(--glow-soft); }
+  }
+  h1 {
+    font-size: 48px; letter-spacing: 4px; margin: 0 0 14px; font-weight: 600;
+    color: #fff; text-shadow: 0 0 30px var(--glow-soft);
+  }
+  .tagline { color: var(--muted); font-size: 19px; max-width: 540px; margin: 0 auto 36px; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(180deg, #1a3a57, #0f2436);
+    border: 1px solid var(--glow); color: #fff;
+    padding: 16px 32px; border-radius: 10px;
+    font-size: 17px; font-weight: 600; text-decoration: none;
+    box-shadow: 0 0 25px var(--glow-soft);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cta:hover { transform: translateY(-1px); box-shadow: 0 0 40px var(--glow-soft); }
+  .cta small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .sub-note { color: var(--muted); font-size: 13px; margin-top: 14px; }
+
+  .oneline { max-width: 720px; margin: 34px auto 0; text-align: left; }
+  .oneline-label { color: var(--glow); font-size: 13px; letter-spacing: 1px; margin-bottom: 8px; text-align: center; }
+  .oneline-row { display: flex; gap: 8px; align-items: stretch; }
+  .oneline-row code { flex: 1; padding: 12px 14px; font-size: 12.5px; overflow-x: auto; white-space: nowrap; border-radius: 8px; }
+  .oneline-row button {
+    background: #0f2436; color: #fff; border: 1px solid var(--glow); border-radius: 8px;
+    padding: 0 18px; font-size: 14px; cursor: pointer;
+  }
+  .oneline-row button:hover { box-shadow: 0 0 18px var(--glow-soft); }
+  .oneline-help { color: var(--muted); font-size: 12px; margin-top: 8px; text-align: center; }
+
+  section { padding: 50px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 22px; letter-spacing: 1px; color: #fff; margin-bottom: 22px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--glow); }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; }
+  .card.mavis h3 { color: var(--mavis); }
+
+  ol.steps { padding-left: 22px; color: var(--text); }
+  ol.steps li { margin-bottom: 14px; }
+  code {
+    background: #0f1826; border: 1px solid var(--line); border-radius: 6px;
+    padding: 2px 7px; font-size: 13px; color: #a9e6ff;
+  }
+
+  .examples { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 24px; }
+  @media (max-width: 640px) { .examples { columns: 1; } }
+  .examples li {
+    color: var(--muted); font-size: 14px; margin-bottom: 10px;
+    padding-left: 18px; position: relative;
+  }
+  .examples li::before { content: "“"; position: absolute; left: 0; color: var(--glow); }
+
+  footer {
+    text-align: center; padding: 50px 0 70px; color: var(--muted); font-size: 13px;
+  }
+  footer a { color: var(--glow); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="ring">JARVIS</div>
+    <h1>JARVIS</h1>
+    <p class="tagline">An always-listening, Iron&nbsp;Man–style voice assistant for your Mac — your own, running on your own machine, powered by Claude.</p>
+    <a class="cta" href="downloads/JARVIS-Mac.zip">
+      ⬇ Download for Mac
+      <small>Free · about 10 minutes to set up · updated Oct 16, 2026</small>
+    </a>
+    <div class="oneline">
+      <div class="oneline-label">Or the easiest way: paste this into Terminal</div>
+      <div class="oneline-row">
+        <code id="cmd">cd ~ &amp;&amp; curl -fsSLO https://tlkb2109.github.io/jarvis-download/downloads/JARVIS-Mac.zip &amp;&amp; unzip -oq JARVIS-Mac.zip &amp;&amp; rm JARVIS-Mac.zip &amp;&amp; bash JARVIS/setup.sh</code>
+        <button id="copy" type="button">Copy</button>
+      </div>
+      <div class="oneline-help">Open Terminal with Cmd+Space, type "Terminal", Return. Paste, press Return, answer the questions.</div>
+    </div>
+    <p class="sub-note">Requires a Mac (Apple silicon recommended, macOS 13 or newer) and a Claude account that includes Claude Code (Pro or Max). Listening and speech-to-text run on your machine; only the text of what you say goes to Claude.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>What he does</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Hey Jarvis</h3>
+        <p>Wake word, speech-to-text, and a real conversation — he keeps listening after he answers, so follow-ups just work.</p>
+      </div>
+      <div class="card">
+        <h3>Actually useful</h3>
+        <p>Gmail, Calendar, Google Drive, Spotify, texts, reminders, timers, web search — he reads things back and asks before sending anything.</p>
+      </div>
+      <div class="card">
+        <h3>A holographic HUD</h3>
+        <p>A on-screen display that glows while he listens, spins while he thinks, and shows panels, schedules and drafts as he talks.</p>
+      </div>
+      <div class="card mavis">
+        <h3>Mavis</h3>
+        <p>A second personality who shows up on screen to tease, react, and riff — not just a voice, a little bit of company.</p>
+      </div>
+      <div class="card">
+        <h3>Your phone, too</h3>
+        <p>A page on your phone becomes a second mic, keyboard and speaker for the same Jarvis, same memory, same connectors. With Tailscale it works from anywhere.</p>
+      </div>
+      <div class="card">
+        <h3>He remembers</h3>
+        <p>A daily log and a running list of your bits and callbacks, handed back to him at the start of every conversation. Say "remember this" and it's filed instantly.</p>
+      </div>
+      <div class="card">
+        <h3>Type instead of talk</h3>
+        <p>Didn't catch what you said, or just don't want to talk out loud? Type a line in the terminal — same Jarvis, no wake word needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Try saying</h2>
+    <ul class="examples">
+      <li>Good morning. Brief me.</li>
+      <li>What's on my calendar tomorrow?</li>
+      <li>Email Mom that I'll be late.</li>
+      <li>Play some jazz on Spotify.</li>
+      <li>Google who played guitar on Kind of Blue.</li>
+      <li>Set a timer for twenty minutes.</li>
+      <li>Open my Gmail and read the newest one.</li>
+      <li>Remind me to call Dan at seven.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Setup</h2>
+    <ol class="steps">
+      <li>Easiest: paste the one-line command above into Terminal and skip to step 3. Or download the zip and unzip it somewhere permanent, like your home folder.</li>
+      <li>Open <b>Terminal</b>, type <code>bash </code> (with a space), drag <code>setup.sh</code> into the window, press Return. It asks your name and a few details, installs what it needs (about 1.5 GB of speech models, one time) and triggers the macOS permission prompts: click Allow.</li>
+      <li>If Claude Code opens, log in with your claude.ai account, then type <code>/exit</code>. On claude.ai, under Settings &rsaquo; Connectors, connect Gmail, Google Drive, Google Calendar and Spotify once.</li>
+      <li>Double-click <b>Jarvis.command</b> and say "Hey Jarvis." He introduces himself the first time.</li>
+    </ol>
+    <p class="sub-note">Full details, every setting, and troubleshooting are in the README inside the download.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Runs entirely on your own Mac. Your voice and your data stay yours.<br>
+    Built by Tanner Benjamin.
+  </div>
+</footer>
+
+<script>
+  document.getElementById('copy').addEventListener('click', function () {
+    var b = this, t = document.getElementById('cmd').textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () {
+      b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1800);
+    }, function () {
+      var r = document.createRange(); r.selectNodeContents(document.getElementById('cmd'));
+      var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Press Cmd+C';
+    });
+  });
+</script>
+</body>
+</html>
